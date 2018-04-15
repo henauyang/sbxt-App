@@ -41,7 +41,7 @@
 					var currentData = null;
 					var gridOne = []; //基本数据
 					var gridPlantH = []; //植株高度数据
-					var gridPlantH新增1 = []; //其他数据
+					var PSON = []; //其他数据
 					var pageTemp = 0;
 					var generateDate = app.utils.dateFormat(new Date(), "yyyy-MM-dd HH:mm:ss");
 					var gridsJSONDatas = {
@@ -71,25 +71,32 @@
 							var sampBtns = document.getElementsByClassName('sampbtn');
 							console.log("采样项个数：" + sampBtns.length);
 							//if(sampBtns[0].value == "植株高度") {
-							sampBtns[0].addEventListener('tap', function() {
-								childPage = plus.webview.create("addPlantHeight.html", "add.html", {
-									width: '90%',
-									height: "500px",
-									margin: "auto",
-									position: "relative",
-									borderRadius: "25px",
-									background: "rgba(0,0,0,0.5)",
-									scrollIndicator: 'none',
-									scalable: false,
-									popGesture: 'none'
-								});
-								childPage.addEventListener("loaded", function() {
-									childPage.show('fade-in', 300);
-									childPage = null;
-								}, false);
-							})
-							//};
-
+							var urlList = new Array(2);
+							urlList[0] = "addPlantHeight.html";
+							urlList[1] = "addPSON.html";
+							for(var k=0;k<sampBtns.length;k++){
+								console.log(urlList[k]+"数组中得值");
+								sampBtns[k].hUrl = urlList[k];
+								sampBtns[k].addEventListener('tap', function() {
+									console.log(this.hUrl);
+									childPage = plus.webview.create(this.hUrl,this.hUrl, {
+										width: '90%',
+										height: "500px",
+										margin: "auto",
+										position: "relative",
+										borderRadius: "25px",
+										background: "rgba(0,0,0,0.5)",
+										scrollIndicator: 'none',
+										scalable: false,
+										popGesture: 'none'
+									});
+									childPage.addEventListener("loaded", function() {
+										childPage.show('fade-in', 300);
+										childPage = null;
+									}, false);
+								})
+							}
+							
 							//子界面编辑完植株高度的时候触发的父界面的事件
 							window.addEventListener('editPlantHeight', function(e) {//侦听到事件后处理事件的函数。 此函数必须接受 Event 对象作为其唯一的参数，并且不能返回任何结果
 								gridPlantH.push(e.detail);
@@ -97,16 +104,21 @@
 								for(var i = 0; i < gridPlantH.length; i++) {//gridPlantH植株高度数据
 									var istr = (i + 1).toString();//转换成字符串
 									var gridSH = document.getElementById(istr);
-									gridSH.innerHTML = gridSH.getAttribute('id') + "<h5>植株高度：" + gridPlantH[i].plHeightTemp + "cm</h5>";//id跳转到后面的页面内容更改
+									gridSH.innerHTML = gridSH.getAttribute('id') + "<h5>植株高度" + gridPlantH[i].plHeightTemp + "cm</h5>";//id跳转到后面的页面内容更改
 								}
-//								window.addEventListener('editPlantHeight新增1', function(a) {
-//								console.log("sHpush OK!" + JSON.stringify(a.detail));
-//								for(var i = 0; i < gridPlantH新增1.length; i++) {
-//								var istr新增1 = (i + 1).toString();
-//									var gridSH新增1 = document.getElementById(istr新增1);
-//									gridSH新增1.innerHTML = gridSH新增1.getAttribute('id') + "<h5>新增1：" + gridPlantH新增1[i].plHeightTemp + "cm</h5>";
-//								}
+							
 							})
+							window.addEventListener('editPSON', function(e) {//侦听到事件后处理事件的函数。 此函数必须接受 Event 对象作为其唯一的参数，并且不能返回任何结果
+								PSON.push(e.detail);
+								console.log("sHpush OK!" + JSON.stringify(e.detail));//JSON.stringify(e.detail)在控制台显示所有的e.datail的属性的值
+								for(var i = 0; i < PSON.length; i++) {//gridPlantH植株高度数据
+									var istr = (i + 1).toString();//转换成字符串
+									var gridSH = document.getElementById(istr);
+									gridSH.innerHTML = gridSH.getAttribute('id') + "<h5>PSON" + PSON[i].pson + "kg</h5>";//id跳转到后面的页面内容更改
+								}
+							
+							})
+							
 
 							//detailPage = plus.webview.getWebviewById(pageUrlArr[pageTemp]);
 							document.getElementById('getLayoutParams').style.display = "none";
